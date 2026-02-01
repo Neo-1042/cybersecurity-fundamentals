@@ -231,3 +231,38 @@ CREATE OR REPLACE PACKAGE BODY security_pkg IS
     /
 
 ```
+
+# PL/SQL Example. Authorization Bypass/IDOR
+
+```sql
+-- Authorization/anti-tampering
+-- Validate that the current session user is allowed
+-- to see this CL_EM
+
+SELECT COUNT(1)
+INTO REG_AUTH
+FROM TBL_EM_SERVICE_AUTHORIZATION A
+WHERE A.CL_EM = L_PX
+AND A.DB_USER = SYS_CONTEXT('USERENV', 'SESSION_USER');
+```
+
+- Reemplaza 'TBL_EM_SERVICE_AUTHORIZATION' por la
+VIEW/TABLE/RULE apropiada.
+
+- Se trata de validar ambos rubros:
+    - **Formato, rango, valores permitidos**
+    - **Permisos**
+
+## Implementar el Authorization Check de forma correcta
+
+¿Qué es lo que determina si lo que llama al SP tiene
+autorización para hacer query al `CL_EM`?
+
+Ejemplos:
+
+1. ¿`CL_EM` está ligado al usuario loggeado a la app?
+2. ¿Está ligado a un BRANCH/ROLE/REGION?
+3. ¿Debería permitir únicamente 'mi propio `CL_EM`'?
+4. ¿Se tiene una tabla donde se mapean:
+
+USERS ---> Valores `CL_EM` permitidos ?
