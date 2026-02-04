@@ -10,7 +10,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Whenever the script runs, it will pass the request throught these proxies
 # using the Burp Suite.
-proxies = {'http': 'http://127.0.0.1:8080', 'https' : 'http://127.0.0.1:8043'}
+proxies = {'http': 'http://127.0.0.1:8080', 'https' : 'http://127.0.0.1:8080'}
 
 def exploit_sqli(url, payload):
     uri = '/filter?category='
@@ -24,7 +24,7 @@ def exploit_sqli(url, payload):
 
 if __name__ == "__main__":
     try:
-        url = sys.argv[1].strip()
+        url = sys.argv[1].strip() # Strip all the whitespaces
         payload = sys.argv[2].strip()
     except IndexError:
         print("[ - ] Usage: %s <url> <payload>" % sys.argv[0])

