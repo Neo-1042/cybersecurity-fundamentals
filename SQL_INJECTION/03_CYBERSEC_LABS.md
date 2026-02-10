@@ -258,3 +258,7 @@ Number of columns = 3
 Payload 4 (second strategy):  
 
 `GET /filter?category=Gifts'ORDER BY 4--`
+
+Number of columns = 3
+
+> Go to 'sqli-lab-03.py'
